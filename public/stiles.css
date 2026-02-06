@@ -55,7 +55,7 @@ table {
  ************************/
 
 body {
-  background-color:rgb(236, 236, 236);
+  background-color:rgb(197, 197, 197);
   font-family: "Roboto", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -107,11 +107,60 @@ main {
   overflow: hidden;
 }
 
+.product-card a {
+  margin-top: 10px;
+  padding: 5px;
+  background-color: green;
+  color: white;
+  text-decoration: none;
+}
+
 h3 {
   padding: 5px;
   font-weight:var(--font-bold);
 }
 
-a {
+form {
+background-color: rgb(255, 253, 253);
+width: 300px;
+}
+
+.fieldset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 1rem;
+  background-color: rgb(228, 175, 175);
+}
+
+button {
+  background-color: green;
   padding: 5px;
+}
+
+legend {
+  font-weight: var(--font-bold);
+}
+
+/***card****/
+.product-cardId{
+background-color: white;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 10px;
+width: 250px;
+height: 300px;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.product-cardId img {
+  width: auto;
+  height: auto;
+  overflow: hidden;
 }

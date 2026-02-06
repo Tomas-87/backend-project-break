@@ -1,11 +1,10 @@
 // `controllers/productController.js`: Archivo que contendrá la lógica para manejar las solicitudes CRUD de los productos. Devolverá las respuestas en formato HTML.
 
 const { basicHtml } = require("../helpers/baseHtml");
-const { getProductCards } = require("../helpers/template");
 const Product = require("../models/Product");
 
 const {
-  getProductCard,
+  getProductCards,
   getProductById,
   getProductForm,
 } = require("../helpers/template");
@@ -42,9 +41,20 @@ const productControllers = {
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(
-        basicHtml(product.name, getProductById(product, false))    
-      );
+      res.send(basicHtml(product.name, getProductById(product, false)));
+    } catch (error) {
+      res.status(500).send(`<h1> Error del servidor </h1>
+        <p>${error.message}</p>`);
+    }
+  },
+  showDashboardProductById: async (req, res) => {
+    try {
+      const { productId } = req.params;
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).send("<h1> Producto no encontrado </h1>");
+      }
+      res.send(getProductById(product, true));
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
@@ -60,7 +70,7 @@ const productControllers = {
       if (products.length === 0) {
         html += "<p>No hay productos subidos.</p>";
       } else {
-        html += `${getProductCards(products, true)}`;
+        html = `${basicHtml("Dashboard", getProductCards(products, true))}`;
       }
       res.send(html);
     } catch (error) {
@@ -75,7 +85,7 @@ const productControllers = {
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(`${getProductById(product, true)}`);
+      res.send(`${getProductById(product, false)}`);
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
