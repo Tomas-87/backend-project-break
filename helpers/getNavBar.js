@@ -13,4 +13,19 @@ function getNavBar() {
     `;
 }
 
-module.exports = { getNavBar };
+function getNavBarDashboard() {
+  return `
+    <nav class="navbar">
+      <div class="navbar_logo">
+        <a href="/dashboard">Productos</a>
+        <a href="/dashboard?category=camisetas">Camisetas</a>
+        <a href="/dashboard?category=pantalones">Pantalones</a>
+        <a href="/dashboard?category=zapatos">Zapatos</a>
+        <a href="/dashboard?category=accesorios">Accesorios</a>
+        <a href="/dashboard/new">Nuevo producto</a>
+      </div>
+    </nav>
+  `;
+}
+
+module.exports = { getNavBar, getNavBarDashboard };

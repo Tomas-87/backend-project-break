@@ -8,6 +8,7 @@ const { basicHtml } = require("./baseHtml");
 const colorOptions = getColorOptions(validColors);
 const categoryOptions = getColorOptions(validCategories);
 const sizeOptions = getColorOptions(validSizes);
+const { getNavBar, getNavBarDashboard } = require("./getNavBar");
 
 function getProductCards(products, isDashboard = false) {
   return products
@@ -16,7 +17,7 @@ function getProductCards(products, isDashboard = false) {
     <div class="product-card">
     <h3>${product.name}</h3>
     <img src="${product.image}" alt="${product.name}">
-     ${isDashboard ? `<a href="/dashboard/${product._id}/edit">Ver</a>` : `<a href="/products/${product._id}">Ver detalles</a>`}
+     ${isDashboard ? `<a href="/dashboard/${product._id}">Ver</a>` : `<a href="/products/${product._id}">Ver detalles</a>`}
     </div>
     `,
     )
@@ -37,23 +38,27 @@ function getProductById(product, isDashboard = false) {
       <div class="dashboard-actions">
         <a href="/dashboard/${product._id}/edit">Editar</a>
         <form action="/dashboard/${product._id}/delete?_method=DELETE" method="POST">
-          <button type="submit">Eliminar</button>
+          <button class="delete-button" type="submit">Eliminar</button>
         </form>
       </div>
       `;
   } else {
-    `<a href="/products">Volver a productos</a>`;
+    html += `<a href="/products">Volver a productos</a>`;
   }
 
   html += `</div>`;
 
-  return basicHtml(product.name, html);
+  return basicHtml(
+    product.name,
+    html,
+    isDashboard ? getNavBarDashboard : getNavBar,
+  );
 }
 
 //formulario de creación y edición
 function getProductForm(product = {}, isEdit = false) {
   const html = `
-      <form action="${isEdit ? `/dashboard/${product._id}?_method=PUT` : "/dashboard"}" method="POST">
+      <form class="form" action="${isEdit ? `/dashboard/${product._id}?_method=PUT` : "/dashboard"}" method="POST">
       
         <fieldset class="fieldset-form">
           <legend>Información del producto</legend>
@@ -81,7 +86,7 @@ function getProductForm(product = {}, isEdit = false) {
         </fieldset>
       </form>
     `;
-  return basicHtml("Formulario", html);
+  return basicHtml("Formulario", html, getNavBarDashboard);
 }
 
 module.exports = { getProductCards, getProductById, getProductForm };

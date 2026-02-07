@@ -1,6 +1,4 @@
-const { getNavBar } = require("./getNavBar");
-
-function basicHtml(title, body) {
+function basicHtml(title, body, navBar) {
   return `
     <!DOCTYPE html>
     <html lang="es">
@@ -11,7 +9,7 @@ function basicHtml(title, body) {
       </head>
       <body>
         <header>
-          ${getNavBar()}
+          ${navBar()}
           <h1 class="title">${title}</h1>
         </header>
           <main>

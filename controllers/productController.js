@@ -2,7 +2,7 @@
 
 const { basicHtml } = require("../helpers/baseHtml");
 const Product = require("../models/Product");
-
+const { getNavBar, getNavBarDashboard } = require("../helpers/getNavBar");
 const {
   getProductCards,
   getProductById,
@@ -13,10 +13,9 @@ const productControllers = {
   showProducts: async (req, res) => {
     try {
       const products = await Product.find(req.query);
-      const html = `
-        ${basicHtml("Productos", getProductCards(products, false))}       
-        `;
-      res.send(html);
+      res.send(
+        basicHtml("Productos", getProductCards(products, false), getNavBar),
+      );
     } catch (error) {
       res.status(500).send("<h1> Error del servidor </h1>");
     }
@@ -32,16 +31,16 @@ const productControllers = {
     }
   },
   showNewProduct: (req, res) => {
-    res.send(basicHtml("Crear nuevo producto", getProductForm({}, false)));
+    res.send(getProductForm({}, true));
   },
   showProductById: async (req, res) => {
     try {
       const { productId } = req.params;
-      const product = await Product.findById(productId); ///////////////////////
+      const product = await Product.findById(productId);
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(basicHtml(product.name, getProductById(product, false)));
+      res.send(getProductById(product, false));
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
@@ -61,8 +60,9 @@ const productControllers = {
     }
   },
   showDashboard: async (req, res) => {
+    //////////
     try {
-      const products = await Product.find();
+      const products = await Product.find(req.query);
       let html = `
         <h1> Dashboard del administrador </h1>
         <a href="/dashboard/new">Subir un nuevo producto</a>
@@ -70,22 +70,13 @@ const productControllers = {
       if (products.length === 0) {
         html += "<p>No hay productos subidos.</p>";
       } else {
-        html = `${basicHtml("Dashboard", getProductCards(products, true))}`;
+        html = basicHtml(
+          "Dashboard",
+          getProductCards(products, true),
+          getNavBarDashboard,
+        );
       }
       res.send(html);
-    } catch (error) {
-      res.status(500).send(`<h1> Error del servidor </h1>
-        <p>${error.message}</p>`);
-    }
-  },
-  showProductById: async (req, res) => {
-    try {
-      const { productId } = req.params;
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).send("<h1> Producto no encontrado </h1>");
-      }
-      res.send(`${getProductById(product, false)}`);
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
@@ -97,7 +88,7 @@ const productControllers = {
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(`${getProductForm(product, true)}`);
+      res.send(getProductForm(product, true));
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
