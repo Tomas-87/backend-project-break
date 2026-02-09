@@ -96,9 +96,17 @@ const productControllers = {
   },
   updateProduct: async (req, res) => {
     try {
-      await Product.findByIdAndUpdate(req.params.productId, req.body, {
-        runValidators: true,
-      });
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.productId,
+        req.body,
+        {
+          runValidators: true,
+          new: true,
+        },
+      );
+      if (!updatedProduct) {
+        return res.status(404).send("<h1> Producto no encontrado </h1>");
+      }
       res.redirect("/dashboard");
     } catch (error) {
       res.status(400).send(`<h1> Error al actualizar el producto </h1>

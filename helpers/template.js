@@ -17,6 +17,7 @@ function getProductCards(products, isDashboard = false) {
     <div class="product-card">
     <h3>${product.name}</h3>
     <img src="${product.image}" alt="${product.name}">
+    <p>Precio: ${product.price}€</p>
      ${isDashboard ? `<a href="/dashboard/${product._id}">Ver</a>` : `<a href="/products/${product._id}">Ver detalles</a>`}
     </div>
     `,

@@ -15,6 +15,4 @@ app.use(express.static("public"));
 
 app.use("/", routes);
 
-dbConnection();
-
-app.listen(PORT, () => `Server is running on http://localhost:${PORT}`);
+module.exports = app;

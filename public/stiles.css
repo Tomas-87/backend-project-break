@@ -97,8 +97,12 @@ main {
   flex-direction: column;
   align-items: center;
   width: 250px;
-  height: 260px;
+  height: 270px;
   background-color: white;
+}
+
+.product-card p {
+  padding: 5px;
 }
 
 .product-card img {
