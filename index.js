@@ -7,11 +7,16 @@ const PORT = process.env.PORT;
 const methodOverride = require("method-override"); //metodo put y delete en html
 const path = require("path");
 
+const swaggerUI = require("swagger-ui-express"),
+  swaggerDocs = require("./docs/index");
+
 app.use(methodOverride("_method"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+app.use("/api_docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
 app.use("/", routes);
 
