@@ -15,4 +15,8 @@ app.use(express.static("public"));
 
 app.use("/", routes);
 
+//fronted
+const apiProductRoutes = require("./routes/apiRoutesFront");
+app.use("/api", apiProductRoutes);
+
 module.exports = app;
