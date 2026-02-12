@@ -9,7 +9,7 @@ function basicHtml(title, body, navBar) {
       </head>
       <body>
         <header>
-          ${navBar()}
+          ${navBar}
           <h1 class="title">${title}</h1>
         </header>
           <main>

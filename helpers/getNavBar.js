@@ -1,4 +1,18 @@
-function getNavBar() {
+function getNavBar(req) {
+  let auth = "";
+
+  if (!req.session.userId) {
+    auth = `
+      <a href="/login">Iniciar Sesión</a>
+      <a href="/register">Crear Cuenta</a>
+      `;
+  } else {
+    auth = `
+      <form action="/logout" method="POST">
+        <button id="cerrar_sesion" type="submit">Cerrar Sesión</button>
+      </form>
+    `;
+  }
   return `
     <nav class="navbar">
       <div class="navbar_logo">
@@ -7,7 +21,7 @@ function getNavBar() {
         <a href="/products?category=pantalones">Pantalones</a>
         <a href="/products?category=zapatos">Zapatos</a>
         <a href="/products?category=accesorios">Accesorios</a>
-        <a href="/products?category=login">Login</a>
+        ${auth}
       </div>
     </nav>
     `;
@@ -23,6 +37,9 @@ function getNavBarDashboard() {
         <a href="/dashboard?category=zapatos">Zapatos</a>
         <a href="/dashboard?category=accesorios">Accesorios</a>
         <a href="/dashboard/new">Nuevo producto</a>
+        <form action="/logout" method="POST">
+          <button id="cerrar_sesion" type="submit">Cerrar Sesión</button>
+        </form>
       </div>
     </nav>
   `;

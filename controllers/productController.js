@@ -14,7 +14,11 @@ const productControllers = {
     try {
       const products = await Product.find(req.query);
       res.send(
-        basicHtml("Productos", getProductCards(products, false), getNavBar),
+        basicHtml(
+          "Productos",
+          getProductCards(products, false),
+          getNavBar(req),
+        ),
       );
     } catch (error) {
       res.status(500).send("<h1> Error del servidor </h1>");
@@ -73,7 +77,7 @@ const productControllers = {
         html = basicHtml(
           "Dashboard",
           getProductCards(products, true),
-          getNavBarDashboard,
+          getNavBarDashboard(),
         );
       }
       res.send(html);

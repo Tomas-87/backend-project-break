@@ -52,7 +52,7 @@ function getProductById(product, isDashboard = false) {
   return basicHtml(
     product.name,
     html,
-    isDashboard ? getNavBarDashboard : getNavBar,
+    isDashboard ? getNavBarDashboard() : getNavBar(req),
   );
 }
 
@@ -87,7 +87,7 @@ function getProductForm(product = {}, isEdit = false) {
         </fieldset>
       </form>
     `;
-  return basicHtml("Formulario", html, getNavBarDashboard);
+  return basicHtml("Formulario", html, getNavBarDashboard());
 }
 
 module.exports = { getProductCards, getProductById, getProductForm };

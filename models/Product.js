@@ -54,6 +54,7 @@ const productSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Product", productSchema);
+
 module.exports.validColors = validColors;
 module.exports.validSizes = validSizes;
 module.exports.validCategories = validCategories;

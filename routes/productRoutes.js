@@ -5,22 +5,37 @@ const router = express.Router();
 const Product = require("../models/Product");
 const productControllers = require("../controllers/productController");
 
+const authMiddleware = require("../middlewares/authMiddleware");
+
 router.get("/products", productControllers.showProducts);
 router.get("/products/:productId", productControllers.showProductById);
 
-router.get("/dashboard", productControllers.showDashboard);
-router.get("/dashboard/new", productControllers.showNewProduct);
+router.get("/dashboard", authMiddleware, productControllers.showDashboard);
+router.get("/dashboard/new", authMiddleware, productControllers.showNewProduct);
 
-router.post("/dashboard", productControllers.createProduct);
+router.post("/dashboard", authMiddleware, productControllers.createProduct);
 
-router.get("/dashboard/:productId/edit", productControllers.showEditProduct);
+router.get(
+  "/dashboard/:productId/edit",
+  authMiddleware,
+  productControllers.showEditProduct,
+);
 router.get(
   "/dashboard/:productId",
+  authMiddleware,
   productControllers.showDashboardProductById,
 );
 
-router.put("/dashboard/:productId", productControllers.updateProduct);
+router.put(
+  "/dashboard/:productId",
+  authMiddleware,
+  productControllers.updateProduct,
+);
 
-router.delete("/dashboard/:productId/delete", productControllers.deleteProduct);
+router.delete(
+  "/dashboard/:productId/delete",
+  authMiddleware,
+  productControllers.deleteProduct,
+);
 
 module.exports = router;
