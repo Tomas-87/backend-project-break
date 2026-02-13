@@ -1,18 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const routes = require("./routes/index"); //modificar la ruta si es necesario
+const routes = require("./routes/index");
 const dbConnection = require("./config/db");
 const PORT = process.env.PORT;
 const methodOverride = require("method-override"); //metodo put y delete en html
 const path = require("path");
 
+//rutas fronted
+const apiAuthRoutesFronted = require("./routes/apiAuthRoutesFront");
+const apiProductRoutes = require("./routes/apiRoutesFront");
+
 const session = require("express-session"); //importar session
 
 const swaggerUI = require("swagger-ui-express"),
   swaggerDocs = require("./docs/index");
-
-const authRoutes = require("./routes/authRoutes");
 
 app.use(methodOverride("_method"));
 
@@ -31,12 +33,10 @@ app.use(
 
 app.use("/api_docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
-app.use("/", authRoutes);
-
 app.use("/", routes);
 
-//fronted
-const apiProductRoutes = require("./routes/apiRoutesFront");
+//rutas fronted
+app.use("/api", apiAuthRoutesFronted);
 app.use("/api", apiProductRoutes);
 
 module.exports = app;

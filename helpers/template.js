@@ -4,11 +4,9 @@ const {
   validSizes,
 } = require("../models/Product");
 const getColorOptions = require("../helpers/getColorOptions");
-const { basicHtml } = require("./baseHtml");
 const colorOptions = getColorOptions(validColors);
 const categoryOptions = getColorOptions(validCategories);
 const sizeOptions = getColorOptions(validSizes);
-const { getNavBar, getNavBarDashboard } = require("./getNavBar");
 
 function getProductCards(products, isDashboard = false) {
   return products
@@ -49,11 +47,7 @@ function getProductById(product, isDashboard = false) {
 
   html += `</div>`;
 
-  return basicHtml(
-    product.name,
-    html,
-    isDashboard ? getNavBarDashboard() : getNavBar(req),
-  );
+  return html;
 }
 
 //formulario de creación y edición
@@ -87,7 +81,7 @@ function getProductForm(product = {}, isEdit = false) {
         </fieldset>
       </form>
     `;
-  return basicHtml("Formulario", html, getNavBarDashboard());
+  return html;
 }
 
 module.exports = { getProductCards, getProductById, getProductForm };

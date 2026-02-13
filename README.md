@@ -27,4 +27,7 @@ instalamos las dependencias
 npm install bcrypt (para cifrar las contraseñas),
 npm install express-session (manejar sessiones),
 npm install connect-mongo (guardar siones en mongoDB)
+9. crear rutas de login para fronted (react) con jwt && npm install jsonwebtoken bcrypt &&
+y el .env con JWT_SECRET=miclave
+10. subir fotos con cloudinary (npm i multer cloudinary)
 

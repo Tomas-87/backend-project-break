@@ -2,15 +2,34 @@ const request = require("supertest");
 const mongoose = require("mongoose");
 const { MongoMemoryServer } = require("mongodb-memory-server");
 
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
+
 const app = require("../index");
 const Product = require("../models/Product");
 
 let mongoServer;
+let token;
 
 // Arranque de Mongo en memoria
 beforeAll(async () => {
   mongoServer = await MongoMemoryServer.create();
   await mongoose.connect(mongoServer.getUri());
+
+  //crear admin en la base de datos
+  await User.create({
+    user: "admin",
+    password: await bcrypt.hash("1234", 10),
+    role: "admin",
+  });
+  //obtener token
+  const res = await request(app).post("/api/login").send({
+    user: "admin",
+    password: "1234",
+  });
+
+  token = res.body.token;
+  console.log("TOKEN:", token);
 });
 
 // Limpia la BBDD antes de cada test
@@ -81,7 +100,10 @@ describe("GET /api/products/:id", () => {
 //crear productos
 describe("POST /api/products", () => {
   it("Create a post successfully", async () => {
-    const res = await request(app).post("/api/products").send(buildProduct());
+    const res = await request(app)
+      .post("/api/products")
+      .set("Authorization", `Bearer ${token}`)
+      .send(buildProduct());
 
     expect(res.statusCode).toBe(201);
     expect(res.body.product.name).toBe("Camisetas");
@@ -93,7 +115,11 @@ describe("POST /api/products", () => {
     expect(res.body.product.price).toBe(20);
   });
   it("persist the product in database", async () => {
-    const res = await request(app).post("/api/products").send(buildProduct());
+    const res = await request(app)
+      .post("/api/products")
+      .set("Authorization", `Bearer ${token}`)
+      .send(buildProduct());
+
     const products = await Product.find();
     expect(products.length).toBe(1);
     expect(products[0].name).toBe("Camisetas");
@@ -101,12 +127,14 @@ describe("POST /api/products", () => {
   it("return 400 if name is missing", async () => {
     const res = await request(app)
       .post("/api/products")
+      .set("Authorization", `Bearer ${token}`)
       .send(buildProduct({ name: "" }));
     expect(res.statusCode).toBe(400);
   });
   it("Invalid price return 400 price is not a number", async () => {
     const res = await request(app)
       .post("/api/products")
+      .set("Authorization", `Bearer ${token}`)
       .send(buildProduct({ price: "gratis" }));
 
     expect(res.statusCode).toBe(400);
@@ -120,6 +148,7 @@ describe("PUT /api/products/:id", () => {
 
     const res = await request(app)
       .put(`/api/products/${product._id}`)
+      .set("Authorization", `Bearer ${token}`)
       .send(buildProduct({ price: 30, color: "azul" }));
 
     expect(res.statusCode).toBe(200);
@@ -135,6 +164,7 @@ describe("PUT /api/products/:id", () => {
 
     const res = await request(app)
       .put(`/api/products/${exist}`)
+      .set("Authorization", `Bearer ${token}`)
       .send(buildProduct());
 
     expect(res.statusCode).toBe(404);
@@ -145,6 +175,7 @@ describe("PUT /api/products/:id", () => {
 
     const res = await request(app)
       .put(`/api/products/${product._id}`)
+      .set("Authorization", `Bearer ${token}`)
       .send(buildProduct({ price: "gratis" }));
 
     expect(res.statusCode).toBe(400);
@@ -156,7 +187,9 @@ describe("DELETE /api/products/:id", () => {
   it("deleete product successfully", async () => {
     const product = await Product.create(buildProduct());
 
-    const res = await request(app).delete(`/api/products/${product._id}`);
+    const res = await request(app)
+      .delete(`/api/products/${product._id}`)
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
 
@@ -164,13 +197,15 @@ describe("DELETE /api/products/:id", () => {
     expect(deletePro).toBeNull();
   });
   it("product not found retur 404", async () => {
-    const res = await request(app).delete(
-      "/api/products/64b000000000000000000000",
-    );
+    const res = await request(app)
+      .delete("/api/products/64b000000000000000000000")
+      .set("Authorization", `Bearer ${token}`);
     expect(res.statusCode).toBe(404);
   });
   it("return 400 for invalid product", async () => {
-    const res = await request(app).delete("/api/products/invalid_id");
+    const res = await request(app)
+      .delete("/api/products/invalid_id")
+      .set("Authorization", `Bearer ${token}`);
     expect(res.statusCode).toBe(400);
   });
 });

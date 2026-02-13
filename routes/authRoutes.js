@@ -5,12 +5,9 @@ const express = require("express"),
 
 router.get("/login", authController.showLogin);
 router.post("/login", authController.login);
-
-router.get("/logout", authController.logout);
 router.post("/logout", authController.logout);
 
 router.get("/register", authController.showRegister);
-
 router.post("/register", authController.register);
 
 module.exports = router;

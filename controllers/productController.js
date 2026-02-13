@@ -35,7 +35,9 @@ const productControllers = {
     }
   },
   showNewProduct: (req, res) => {
-    res.send(getProductForm({}, true));
+    res.send(
+      basicHtml("Formulario", getProductForm({}, true), getNavBarDashboard()),
+    );
   },
   showProductById: async (req, res) => {
     try {
@@ -44,7 +46,9 @@ const productControllers = {
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(getProductById(product, false));
+      res.send(
+        basicHtml(product.name, getProductById(product, false), getNavBar(req)),
+      );
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
@@ -57,14 +61,19 @@ const productControllers = {
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(getProductById(product, true));
+      res.send(
+        basicHtml(
+          product.name,
+          getProductById(product, true),
+          getNavBarDashboard(),
+        ),
+      );
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
     }
   },
   showDashboard: async (req, res) => {
-    //////////
     try {
       const products = await Product.find(req.query);
       let html = `
@@ -92,7 +101,13 @@ const productControllers = {
       if (!product) {
         return res.status(404).send("<h1> Producto no encontrado </h1>");
       }
-      res.send(getProductForm(product, true));
+      res.send(
+        basicHtml(
+          "Editar producto",
+          getProductForm(product, true),
+          getNavBarDashboard(),
+        ),
+      );
     } catch (error) {
       res.status(500).send(`<h1> Error del servidor </h1>
         <p>${error.message}</p>`);
