@@ -6,7 +6,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
 const app = require("../index");
-const Product = require("../models/Product");
+const { Product } = require("../models/Product");
 
 let mongoServer;
 let token;

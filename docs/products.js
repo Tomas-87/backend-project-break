@@ -47,6 +47,88 @@ module.exports = {
       },
     },
   },
+  "/api/products/search": {
+    get: {
+      summary: "Search products with filters",
+      tags: ["Products"],
+      parameters: [
+        {
+          name: "name",
+          in: "query",
+          schema: { type: "string" },
+          description: "Filter by product name (partial match)",
+        },
+        {
+          name: "category",
+          in: "query",
+          schema: {
+            type: "string",
+            enum: ["camisetas", "pantalones", "zapatos", "accesorios"],
+          },
+        },
+        {
+          name: "size",
+          in: "query",
+          schema: {
+            type: "string",
+            enum: ["S", "M", "L", "XL"],
+          },
+        },
+        {
+          name: "minPrice",
+          in: "query",
+          schema: { type: "number" },
+        },
+        {
+          name: "maxPrice",
+          in: "query",
+          schema: { type: "number" },
+        },
+        {
+          name: "sort",
+          in: "query",
+          schema: {
+            type: "string",
+            enum: ["price_asc", "price_desc", "name_asc", "name_desc"],
+          },
+        },
+        {
+          name: "page",
+          in: "query",
+          schema: { type: "integer", default: 1 },
+        },
+        {
+          name: "limit",
+          in: "query",
+          schema: { type: "integer", default: 10 },
+        },
+      ],
+      responses: {
+        200: {
+          description: "Filtered products",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  total: { type: "integer" },
+                  page: { type: "integer" },
+                  totalPages: { type: "integer" },
+                  products: {
+                    type: "array",
+                    items: {
+                      $ref: "#/components/schemas/Product",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        500: { description: "Internal server error" },
+      },
+    },
+  },
 
   "/api/products/{id}": {
     put: {
@@ -130,4 +212,4 @@ module.exports = {
   },
 };
 
-//http://localhost:3000/api/docs
+//http://localhost:3000/api_docs

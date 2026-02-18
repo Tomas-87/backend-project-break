@@ -53,8 +53,17 @@ const productSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model("Product", productSchema);
+//indices para mejorar filtros y ordenar
+productSchema.index({ name: 1 });
+productSchema.index({ category: 1 });
+productSchema.index({ size: 1 });
+productSchema.index({ price: 1 });
 
-module.exports.validColors = validColors;
-module.exports.validSizes = validSizes;
-module.exports.validCategories = validCategories;
+const Product = mongoose.model("Product", productSchema);
+
+module.exports = {
+  Product,
+  validColors,
+  validSizes,
+  validCategories,
+};

@@ -22,7 +22,7 @@ router.delete("/dashboard/:productId/delete", productControllers.deleteProduct);
 5. separamos las rutas con los controladores en dos carpetas controlers donde iran todos los controladores de las rutas y routes donde iran las rutas.
 6. crear los test con mongoMemoryServer     const { MongoMemoryServer } = require("mongodb-memory-server");
 7. swager  documentar api con swager documentaremos todas las rutas creadas.
-8. crear otra ruta pa el login.
+8. crear otra ruta para el login.
 instalamos las dependencias  
 npm install bcrypt (para cifrar las contraseñas),
 npm install express-session (manejar sessiones),
@@ -30,4 +30,5 @@ npm install connect-mongo (guardar siones en mongoDB)
 9. crear rutas de login para fronted (react) con jwt && npm install jsonwebtoken bcrypt &&
 y el .env con JWT_SECRET=miclave
 10. subir fotos con cloudinary (npm i multer cloudinary)
+añadir arrastrar y soltar para subir fotos
 

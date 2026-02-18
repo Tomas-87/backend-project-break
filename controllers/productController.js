@@ -1,13 +1,14 @@
 // `controllers/productController.js`: Archivo que contendrá la lógica para manejar las solicitudes CRUD de los productos. Devolverá las respuestas en formato HTML.
 
 const { basicHtml } = require("../helpers/baseHtml");
-const Product = require("../models/Product");
+const { Product } = require("../models/Product");
 const { getNavBar, getNavBarDashboard } = require("../helpers/getNavBar");
 const {
   getProductCards,
   getProductById,
   getProductForm,
 } = require("../helpers/template");
+const cloudinary = require("../config/cloudinary");
 
 const productControllers = {
   showProducts: async (req, res) => {
@@ -26,7 +27,25 @@ const productControllers = {
   },
   createProduct: async (req, res) => {
     try {
-      await Product.create(req.body);
+      let imageUrl = req.body.image;
+
+      if (req.file) {
+        const result = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "products" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            },
+          );
+          stream.end(req.file.buffer);
+        });
+
+        imageUrl = result.secure_url;
+      }
+
+      await Product.create({ ...req.body, image: imageUrl });
+
       res.redirect("/dashboard");
     } catch (error) {
       res.status(400).send(`<h1> Error al crear el producto </h1>
@@ -36,7 +55,7 @@ const productControllers = {
   },
   showNewProduct: (req, res) => {
     res.send(
-      basicHtml("Formulario", getProductForm({}, true), getNavBarDashboard()),
+      basicHtml("Formulario", getProductForm({}, false), getNavBarDashboard()),
     );
   },
   showProductById: async (req, res) => {
@@ -113,26 +132,60 @@ const productControllers = {
         <p>${error.message}</p>`);
     }
   },
+
   updateProduct: async (req, res) => {
     try {
+      const product = await Product.findById(req.params.productId);
+
+      if (!product) {
+        return res.status(404).send("<h1>Producto no encontrado</h1>");
+      }
+
+      let imageUrl = product.image; // mantener la actual por defecto
+
+      // Si se sube nueva imagen
+      if (req.file && process.env.CLOUD_NAME) {
+        const result = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "products" },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            },
+          );
+          stream.end(req.file.buffer);
+        });
+
+        imageUrl = result.secure_url;
+      }
+
+      // Si se pega nueva URL manual
+      if (!req.file) {
+        imageUrl = req.body.imageUrl || req.body.image || imageUrl;
+      }
+
       const updatedProduct = await Product.findByIdAndUpdate(
         req.params.productId,
-        req.body,
+        {
+          ...req.body,
+          image: imageUrl,
+        },
         {
           runValidators: true,
           new: true,
         },
       );
-      if (!updatedProduct) {
-        return res.status(404).send("<h1> Producto no encontrado </h1>");
-      }
+
       res.redirect("/dashboard");
     } catch (error) {
-      res.status(400).send(`<h1> Error al actualizar el producto </h1>
-        <p>${error.message}</p>
-        <a href="/dashboard/${req.params.productId}/edit">Volver al formulario</a>`);
+      res.status(400).send(`
+      <h1>Error al actualizar el producto</h1>
+      <p>${error.message}</p>
+      <a href="/dashboard/${req.params.productId}/edit">Volver</a>
+    `);
     }
   },
+
   deleteProduct: async (req, res) => {
     try {
       await Product.findByIdAndDelete(req.params.productId);
